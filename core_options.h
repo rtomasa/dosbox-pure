@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2020-2025 Bernhard Schelling
+ *  Copyright (C) 2020-2026 Bernhard Schelling
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -233,7 +233,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	#endif
 	{
-		"dosbox_pure_force60fps", // legacy name
+		"dosbox_pure_force60fps", // legacy name (now forcefps)
 		"Force Output FPS", NULL,
 		"Enable this to force output at a fixed rate. Try 60 FPS if you encounter screen tearing or vsync issues." "\n"
 		"Output will have frames skipped at lower rates and frames duplicated at higher rates.", NULL,
@@ -325,11 +325,11 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 
 	// Input
 	{
-		"dosbox_pure_on_screen_keyboard", // legacy name
+		"dosbox_pure_on_screen_keyboard", // legacy name (now map_osd)
 		"Use L3 Button to Show Menu", NULL,
 		"Always bind the L3 controller button to show the menu to swap CDs/Disks and use the On-Screen Keyboard.", NULL,
 		DBP_OptionCat::Input,
-		{ { "true", "On (Default to Menu)" }, { "keyboard", "On (Default to On-Screen Keyboard)" }, { "false", "Off" } },
+		{ { "true", "On (Default to Menu)" }, { "keyboard", "On (Default to On-Screen Keyboard)" }, { "onlyosk", "On (Only On-Screen Keyboard While in Game)" }, { "false", "Off" } },
 		"true"
 	},
 	{

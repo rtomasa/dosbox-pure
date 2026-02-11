@@ -1229,9 +1229,9 @@ struct DBP_OnScreenKeyboardState
 
 				DBP_ASSERT(draww);
 				int rl = (int)((oskx + x) * fx), rr = (int)((oskx + x + draww) * fx), rt = (int)((osky + y) * fy), rb = (int)((osky + y + drawh) * fy);
-				bool hovered = (cX >= rl-1 && cX <= rr && cY >= rt-1 && cY <= rb);
 
-				KBD_KEYS kbd_key = keyboard_keys[row][k - keyboard_rows[row]];
+				const KBD_KEYS kbd_key = keyboard_keys[row][k - keyboard_rows[row]];
+				const bool hovered = (cX >= rl-1 && cX <= rr && cY >= rt-1 && cY <= rb && (dbp_map_osd != 'o' || !dbp_game_running || kbd_key != KBD_LAST));
 				if (hovered) hovered_key = kbd_key;
 
 				buf.AlphaBlendFillRect(rl, rt, rr-rl, rb-rt, (pressed_key == kbd_key ? buf.BGCOL_KEYPRESS : (held[kbd_key] ? buf.BGCOL_KEYHELD : (hovered ? buf.BGCOL_KEYHOVER : buf.BGCOL_KEY))));
@@ -2162,8 +2162,9 @@ struct DBP_OnScreenDisplay : DBP_MenuInterceptor
 			case DBPOSD_SETTINGS: delete ptr.settings; break;
 			#endif
 		}
-		if (in_mode != _DBPOSD_OPEN && in_mode != _DBPOSD_CLOSE) { mode = in_mode; if (!ptr._all) default_shown = 0; }
-		else if (in_mode == _DBPOSD_OPEN && (!default_shown || last_map != dbp_map_osd)) { mode = ((last_map = dbp_map_osd) == 'k' ? DBPOSD_OSK : DBPOSD_MAIN); default_shown = true; }
+		if (dbp_map_osd == 'o' && dbp_game_running) { mode = DBPOSD_OSK; } // only osk
+		else if (in_mode != _DBPOSD_OPEN && in_mode != _DBPOSD_CLOSE) { mode = in_mode; if (!ptr._all) default_shown = 0; }
+		else if (in_mode == _DBPOSD_OPEN && (!default_shown || last_map != dbp_map_osd)) { mode = (((last_map = dbp_map_osd) == 'k' || last_map == 'o') ? DBPOSD_OSK : DBPOSD_MAIN); default_shown = true; }
 		ptr._all = NULL;
 		StartIntercept();
 		switch (in_mode == _DBPOSD_CLOSE ? _DBPOSD_CLOSE : mode)
@@ -2191,7 +2192,7 @@ struct DBP_OnScreenDisplay : DBP_MenuInterceptor
 		bool isOSK = (mode == DBPOSD_OSK);
 		bool mouseMoved = mouse.Update(buf, isOSK);
 
-		if (1) // now always show button bar, was (DBP_FullscreenOSD || !isOSK) before
+		if (dbp_map_osd != 'o' || !dbp_game_running)
 		{
 			int btny = h - 13 - lh, btnmrgn = (w >= 296 ? 34 : 8), ydist = (isOSK ? (int)(127 - (btny - mouse.y) / (h*0.001f)) : 0xFF);
 			Bit32u btnblend = (DBP_FullscreenOSD ? 0xFF000000 : ((ydist > dbp_alphablend_base ? dbp_alphablend_base : (ydist < 30 ? 30 : ydist)) << 24));
