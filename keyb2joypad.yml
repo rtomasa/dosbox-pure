@@ -27434,6 +27434,7 @@
  input_wheel_4: 4 Dragon Claw
  input_wheel_5: 5 Hellstaff
  input_wheel_6: 6 Phoenix Rod
+ input_wheel_7: 7 Firemace
  input_pad_l: wheel
 -
  name: "Hero's Heart"
