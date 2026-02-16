@@ -2821,6 +2821,8 @@ static void init_dosbox(bool forcemenu = false, bool reinit = false, const std::
 		return 0;
 	}};
 
+	if (newcontent) DBP_PadMapping::SetInputDescriptors(true);
+
 	// Start DOSBox thread
 	dbp_frame_pending = true;
 	dbp_state = DBPSTATE_FIRST_FRAME;
@@ -3029,6 +3031,9 @@ bool retro_load_game(const struct retro_game_info *info) //#4
 		retro_notify(0, RETRO_LOG_ERROR, "Frontend does not support XRGB8888.\n");
 		return false;
 	}
+
+	bool support_achievements = true;
+	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS, &support_achievements);
 
 	const char* voodoo_perf = DBP_Option::Get(DBP_Option::voodoo_perf);
 	#else
@@ -3276,11 +3281,6 @@ bool retro_load_game(const struct retro_game_info *info) //#4
 
 	if (info && info->path && *info->path) dbp_content_path = info->path;
 	init_dosbox();
-
-	bool support_achievements = true;
-	environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS, &support_achievements);
-
-	DBP_PadMapping::SetInputDescriptors(true);
 
 	return true;
 }
