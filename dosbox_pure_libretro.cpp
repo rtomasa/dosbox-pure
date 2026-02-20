@@ -303,6 +303,16 @@ static const char* retro_get_variable(const char* key, const char* default_value
 	return (environ_cb && environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value ? var.value : default_value);
 }
 
+static float dbp_mixer_option_to_gain(DBP_Option::Index idx)
+{
+	// Perceptual (logarithmic) volume: 0% is mute, 100% is 0 dB
+	int percent = atoi(DBP_Option::Get(idx));
+	if (percent <= 0) return 0.0f;
+	if (percent >= 100) return 1.0f;
+	const float t = ((float)percent * 0.01f), db = (1.0f - t) * -30.0f;
+	return powf(10.0f, db * 0.05f);
+}
+
 // ------------------------------------------------------------------------------
 
 void DBP_DOSBOX_ForceShutdown(const Bitu = 0);
@@ -314,6 +324,8 @@ void DBP_SetMountSwappingRequested();
 Bit32u DBP_MIXER_GetFrequency();
 Bit32u DBP_MIXER_DoneSamplesCount();
 void DBP_MIXER_ScrapAudio();
+void DBP_MIXER_SetMasterVolume(float volume);
+void DBP_MIXER_SetChannelVolume(const char* channel_name, float volume);
 void MIXER_CallBack(void *userdata, uint8_t *stream, int len);
 bool MSCDEX_HasDrive(char driveLetter);
 int MSCDEX_AddDrive(char driveLetter, const char* physicalPath, Bit8u& subUnit);
@@ -2325,6 +2337,12 @@ static bool check_variables()
 	DBP_Option::GetAndApply(sec_mixer, "swapstereo", DBP_Option::swapstereo);
 	extern bool dbp_swapstereo;
 	dbp_swapstereo = (bool)control->GetProp("mixer", "swapstereo")->GetValue(); // to also get dosbox.conf override
+	DBP_MIXER_SetMasterVolume(dbp_mixer_option_to_gain(DBP_Option::mixer_master));
+	DBP_MIXER_SetChannelVolume("DISNEY", dbp_mixer_option_to_gain(DBP_Option::mixer_disney));
+	DBP_MIXER_SetChannelVolume("SPKR",   dbp_mixer_option_to_gain(DBP_Option::mixer_spkr));
+	DBP_MIXER_SetChannelVolume("SB",     dbp_mixer_option_to_gain(DBP_Option::mixer_sb));
+	DBP_MIXER_SetChannelVolume("FM",     dbp_mixer_option_to_gain(DBP_Option::mixer_fm));
+	DBP_MIXER_SetChannelVolume("TSF",    dbp_mixer_option_to_gain(DBP_Option::mixer_tsf));
 
 	if (dbp_state == DBPSTATE_BOOT)
 	{

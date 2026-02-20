@@ -124,6 +124,12 @@ namespace DBP_Option
 		gus,
 		tandysound,
 		swapstereo,
+		mixer_master,
+		mixer_disney,
+		mixer_spkr,
+		mixer_sb,
+		mixer_fm,
+		mixer_tsf,
 		_OPTIONS_NULL_TERMINATOR, _OPTIONS_TOTAL,
 	};
 
@@ -133,6 +139,10 @@ namespace DBP_Option
 	void SetDisplay(Index idx, bool visible);
 	bool GetHidden(const retro_core_option_v2_definition& d);
 };
+
+#define DBP_MIXER_VOLUME_VALUES \
+	{ "100", "100% (default)" }, { "90", "90%" }, { "80", "80%" }, { "70", "70%" }, { "60", "60%" }, { "50", "50%" }, \
+	{ "40", "40%" }, { "30", "30%" }, { "20", "20%" }, { "10", "10%" }, { "0", "0%" }
 
 static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 {
@@ -274,7 +284,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	#endif
 	{
 		"dosbox_pure_strict_mode",
-		"Advanced > Use Strict Mode", NULL,
+		"Use Strict Mode", NULL,
 		"Disable the command line, running installed operating systems and using .BAT/.COM/.EXE/DOS.YML files from the save game.", NULL,
 		DBP_OptionCat::General,
 		{
@@ -285,7 +295,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_conf",
-		"Advanced > Loading of dosbox.conf", NULL,
+		"Loading of dosbox.conf", NULL,
 		"DOSBox Pure is meant to be configured via core options but optionally supports loading of legacy .conf files.", NULL,
 		DBP_OptionCat::General,
 		{
@@ -297,7 +307,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_menu_time",
-		"Advanced > Start Menu", NULL,
+		"Start Menu", NULL,
 		"Set the behavior of the start menu before and after launching a game." "\n"
 		"You can also force it to open by holding shift or L2/R2 when selecting 'Restart'.", NULL,
 		DBP_OptionCat::General,
@@ -314,7 +324,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_menu_transparency",
-		"Advanced > Menu Transparency", NULL,
+		"Menu Transparency", NULL,
 		"Set the transparency level of the Menu and the On-Screen Keyboard.", NULL,
 		DBP_OptionCat::General,
 		{
@@ -398,7 +408,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_mouse_speed_factor_x",
-		"Advanced > Horizontal Mouse Sensitivity", NULL,
+		"Horizontal Mouse Sensitivity", NULL,
 		"Experiment with this value if the mouse is too fast/slow when moving left/right.", NULL,
 		DBP_OptionCat::Input,
 		{
@@ -414,7 +424,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_actionwheel_inputs",
-		"Advanced > Action Wheel Inputs", NULL,
+		"Action Wheel Inputs", NULL,
 		"Sets which inputs control the action wheel.", NULL,
 		DBP_OptionCat::Input,
 		{
@@ -427,7 +437,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_auto_mapping",
-		"Advanced > Automatic Game Pad Mappings", NULL,
+		"Automatic Game Pad Mappings", NULL,
 		"DOSBox Pure can automatically apply a gamepad control mapping scheme when it detects a game." "\n"
 		"These button mappings are provided by the Keyb2Joypad Project (by Jemy Murphy and bigjim).", NULL,
 		DBP_OptionCat::Input,
@@ -436,7 +446,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_keyboard_layout",
-		"Advanced > Keyboard Layout", NULL,
+		"Keyboard Layout", NULL,
 		"Select the keyboard layout (will not change the On-Screen Keyboard).", NULL,
 		DBP_OptionCat::Input,
 		{
@@ -471,7 +481,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_joystick_analog_deadzone",
-		"Advanced > Joystick Analog Deadzone", NULL,
+		"Joystick Analog Deadzone", NULL,
 		"Set the deadzone of the joystick analog sticks. May be used to eliminate drift caused by poorly calibrated joystick hardware.", NULL,
 		DBP_OptionCat::Input,
 		{
@@ -481,7 +491,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_joystick_timed",
-		"Advanced > Enable Joystick Timed Intervals", NULL,
+		"Enable Joystick Timed Intervals", NULL,
 		"Enable timed intervals for joystick axes. Experiment with this option if your joystick drifts." "\n\n", NULL, //end of Input > Advanced section
 		DBP_OptionCat::Input,
 		{ { "true", "On (default)" }, { "false", "Off" } },
@@ -513,7 +523,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_cycles_max",
-		"Detailed > Maximum Emulated Performance", NULL,
+		"Maximum Emulated Performance", NULL,
 		"With dynamic CPU speed (AUTO or MAX above), the maximum emulated performance level.", NULL,
 		DBP_OptionCat::Performance,
 		{
@@ -534,7 +544,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_cycles_scale",
-		"Detailed > Performance Scale", NULL,
+		"Performance Scale", NULL,
 		"Fine tune the emulated performance for specific needs.", NULL,
 		DBP_OptionCat::Performance,
 		{
@@ -550,7 +560,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_cycle_limit",
-		"Detailed > Limit CPU Usage", NULL,
+		"Limit CPU Usage", NULL,
 		"When emulating DOS as fast as possible, how much time per frame should be used by the emulation." "\n"
 		"Lower this if your device becomes hot while using this core." "\n\n", NULL, //end of Performance > Detailed section
 		DBP_OptionCat::Performance,
@@ -570,7 +580,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_perfstats",
-		"Advanced > Show Performance Statistics", NULL,
+		"Show Performance Statistics", NULL,
 		"Enable this to show statistics about performance and framerate and check if emulation runs at full speed.", NULL,
 		DBP_OptionCat::Performance,
 		{
@@ -907,7 +917,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_cpu_core",
-		"Advanced > CPU Core", NULL,
+		"CPU Core", NULL,
 		"Emulation method (DOSBox CPU core) used.", NULL,
 		DBP_OptionCat::System,
 		{
@@ -929,7 +939,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_bootos_ramdisk",
-		"Advanced > OS Disk Modifications (restart required)", NULL,
+		"OS Disk Modifications (restart required)", NULL,
 		"When running an installed operating system, modifications to the C: drive will be made on the disk image by default." "\n"
 		"Setting it to 'Discard' allows the content to be closed any time without worry of file system or registry corruption." "\n"
 		"When using 'Save Difference Per Content' the disk image must never be modified again, otherwise existing differences become unusable.", NULL,
@@ -943,7 +953,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_bootos_dfreespace",
-		"Advanced > Free Space on D: in OS (restart required)", NULL,
+		"Free Space on D: in OS (restart required)", NULL,
 		"Controls the amount of free space available on the D: drive when running an installed operating system." "\n"
 		"If the total size of the D: drive (data + free space) exceeds 2 GB, it can't be used in earlier versions of Windows 95." "\n"
 		"WARNING: Created save files are tied to this setting, so changing this will hide all existing D: drive changes.", NULL,
@@ -953,7 +963,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_bootos_forcenormal",
-		"Advanced > Force Normal Core in OS", NULL,
+		"Force Normal Core in OS", NULL,
 		"The normal core can be more stable when running an installed operating system." "\n"
 		"This can be toggled on and off to navigate around crashes." "\n\n", NULL, //end of System > Advanced section
 		DBP_OptionCat::System,
@@ -1035,7 +1045,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_sblaster_type",
-		"Advanced > SoundBlaster Type", NULL,
+		"SoundBlaster Type", NULL,
 		"Type of emulated SoundBlaster card.", NULL,
 		DBP_OptionCat::Audio,
 		{
@@ -1051,7 +1061,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_sblaster_adlib_mode",
-		"Advanced > SoundBlaster Adlib/FM Mode", NULL,
+		"SoundBlaster Adlib/FM Mode", NULL,
 		"The SoundBlaster emulated FM synth mode. All modes are Adlib compatible except CMS.", NULL,
 		DBP_OptionCat::Audio,
 		{
@@ -1067,7 +1077,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_sblaster_adlib_emu",
-		"Advanced > SoundBlaster Adlib Provider", NULL,
+		"SoundBlaster Adlib Provider", NULL,
 		"Provider for the Adlib emulation. Default has good quality and low performance requirements.", NULL,
 		DBP_OptionCat::Audio,
 		{
@@ -1078,7 +1088,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_gus",
-		"Advanced > Enable Gravis Ultrasound (restart required)", NULL,
+		"Enable Gravis Ultrasound (restart required)", NULL,
 		"Enable Gravis Ultrasound emulation. Settings are fixed at port 0x240, IRQ 5, DMA 3." "\n"
 		"If the ULTRADIR variable needs to be different than the default 'C:\\ULTRASND' you need to issue 'SET ULTRADIR=...' in the command line or in a batch file.", NULL,
 		DBP_OptionCat::Audio,
@@ -1087,7 +1097,7 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_tandysound",
-		"Advanced > Enable Tandy Sound Device (restart required)", NULL,
+		"Enable Tandy Sound Device (restart required)", NULL,
 		"Enable Tandy Sound Device emulation even when running without Tandy Graphics Adapter emulation.", NULL,
 		DBP_OptionCat::Audio,
 		{ { "auto", "Off (default)" }, { "on", "On" } },
@@ -1095,11 +1105,64 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_swapstereo",
-		"Advanced > Swap Stereo Channels", NULL,
-		"Swap the left and the right audio channel." "\n\n", NULL, //end of Audio > Advanced section
+		"Swap Stereo Channels", NULL,
+		"Swap the left and the right audio channel.", NULL,
 		DBP_OptionCat::Audio,
 		{ { "false", "Off (default)" }, { "true", "On" } },
 		"false"
+	},
+	{
+		"dosbox_pure_mixer_master",
+		"Master Volume", NULL,
+		"Set the volume for the global Master mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_disney",
+		"Disney Volume", NULL,
+		"Set the volume for the Disney mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_spkr",
+		"Speaker Volume", NULL,
+		"Set the volume for the PC Speaker mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_sb",
+		"SoundBlaster Volume", NULL,
+		"Set the volume for the SoundBlaster digital mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_fm",
+		"FM/OPL Volume", NULL,
+		"Set the volume for the FM/OPL mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_tsf",
+		"MIDI Volume", NULL,
+		"Set the volume for the TinySoundFont MIDI mixer channel." "\n\n", NULL, //end of Audio > Advanced section
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
 	},
 
 	{ NULL, NULL, NULL, NULL, NULL, NULL, {{0}}, NULL }

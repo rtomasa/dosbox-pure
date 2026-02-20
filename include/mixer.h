@@ -48,6 +48,7 @@ class MixerChannel {
 public:
 	void SetVolume(float _left,float _right);
 	void SetScale( float f );
+	void SetUserScale(float f);
 	void UpdateVolume(void);
 	void SetFreq(Bitu _freq);
 	void Mix(Bitu _needed);
@@ -80,6 +81,7 @@ public:
 	MIXER_Handler handler;
 	float volmain[2];
 	float scale;
+	float user_scale;
 	Bit32s volmul[2];
 	
 	//This gets added the frequency counter each mixer step

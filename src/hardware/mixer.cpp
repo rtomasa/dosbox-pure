@@ -89,6 +89,49 @@ static Mutex DBP_AudioMutex;
 
 #ifdef C_DBP_LIBRETRO
 bool dbp_swapstereo;
+
+struct DBP_MixerChannelVolumeOverride {
+	const char* channel_name;
+	float volume;
+};
+
+static float dbp_master_volume = 1.0f;
+static DBP_MixerChannelVolumeOverride dbp_channel_volumes[] = {
+	{ "DISNEY", 1.0f },
+	{ "SPKR",   1.0f },
+	{ "SB",     1.0f },
+	{ "FM",     1.0f },
+	{ "TSF",    1.0f },
+};
+
+static float DBP_MIXER_ClampVolume(float volume)
+{
+	if (volume < 0.0f) return 0.0f;
+	if (volume > 1.0f) return 1.0f;
+	return volume;
+}
+
+static float DBP_MIXER_GetChannelVolume(const char* channel_name)
+{
+	for (size_t i = 0; i != (sizeof(dbp_channel_volumes) / sizeof(dbp_channel_volumes[0])); i++)
+	{
+		if (!strcasecmp(dbp_channel_volumes[i].channel_name, channel_name))
+			return dbp_channel_volumes[i].volume;
+	}
+	return 1.0f;
+}
+
+static void DBP_MIXER_SetChannelVolumeStored(const char* channel_name, float volume)
+{
+	for (size_t i = 0; i != (sizeof(dbp_channel_volumes) / sizeof(dbp_channel_volumes[0])); i++)
+	{
+		if (!strcasecmp(dbp_channel_volumes[i].channel_name, channel_name))
+		{
+			dbp_channel_volumes[i].volume = volume;
+			return;
+		}
+	}
+}
 #endif
 
 
@@ -120,6 +163,11 @@ Bit8u MixTemp[MIXER_BUFSIZE];
 MixerChannel * MIXER_AddChannel(MIXER_Handler handler,Bitu freq,const char * name) {
 	MixerChannel * chan=new MixerChannel();
 	chan->scale = 1.0;
+#ifdef C_DBP_LIBRETRO
+	chan->user_scale = DBP_MIXER_GetChannelVolume(name);
+#else
+	chan->user_scale = 1.0f;
+#endif
 	chan->handler=handler;
 	chan->name=name;
 	chan->next=mixer.channels;
@@ -160,8 +208,8 @@ void MIXER_DelChannel(MixerChannel* delchan) {
 }
 
 void MixerChannel::UpdateVolume(void) {
-	volmul[0]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[0]*mixer.mastervol[0]);
-	volmul[1]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[1]*mixer.mastervol[1]);
+	volmul[0]=(Bits)((1 << MIXER_VOLSHIFT)*scale*user_scale*volmain[0]*mixer.mastervol[0]);
+	volmul[1]=(Bits)((1 << MIXER_VOLSHIFT)*scale*user_scale*volmain[1]*mixer.mastervol[1]);
 }
 
 void MixerChannel::SetVolume(float _left,float _right) {
@@ -172,6 +220,11 @@ void MixerChannel::SetVolume(float _left,float _right) {
 
 void MixerChannel::SetScale( float f ) {
 	scale = f;
+	UpdateVolume();
+}
+
+void MixerChannel::SetUserScale(float f) {
+	user_scale = f;
 	UpdateVolume();
 }
 
@@ -800,8 +853,13 @@ void MIXER_Init(Section* sec) {
 	mixer.pos=0;
 	mixer.done=0;
 	memset(mixer.work,0,sizeof(mixer.work));
+#ifdef C_DBP_LIBRETRO
+	mixer.mastervol[0]=dbp_master_volume;
+	mixer.mastervol[1]=dbp_master_volume;
+#else
 	mixer.mastervol[0]=1.0f;
 	mixer.mastervol[1]=1.0f;
+#endif
 
 #ifdef C_DBP_USE_SDL
 	/* Start the Mixer using SDL Sound at 22 khz */
@@ -854,6 +912,31 @@ Bit32u DBP_MIXER_GetFrequency()
 {
 	return mixer.freq;
 }
+
+#ifdef C_DBP_LIBRETRO
+void DBP_MIXER_SetMasterVolume(float volume)
+{
+	dbp_master_volume = DBP_MIXER_ClampVolume(volume);
+	SDL_LockAudio();
+	mixer.mastervol[0] = dbp_master_volume;
+	mixer.mastervol[1] = dbp_master_volume;
+	for (MixerChannel * chan = mixer.channels; chan; chan = chan->next)
+		chan->UpdateVolume();
+	SDL_UnlockAudio();
+}
+
+void DBP_MIXER_SetChannelVolume(const char* channel_name, float volume)
+{
+	if (!channel_name || !*channel_name) return;
+	volume = DBP_MIXER_ClampVolume(volume);
+	DBP_MIXER_SetChannelVolumeStored(channel_name, volume);
+	SDL_LockAudio();
+	for (MixerChannel * chan = mixer.channels; chan; chan = chan->next)
+		if (!strcasecmp(chan->name, channel_name))
+			chan->SetUserScale(volume);
+	SDL_UnlockAudio();
+}
+#endif
 
 Bit32u DBP_MIXER_DoneSamplesCount()
 {
