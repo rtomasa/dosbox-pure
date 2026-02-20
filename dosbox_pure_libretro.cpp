@@ -3438,7 +3438,9 @@ void retro_run(void)
 	}
 
 	bool variable_update = false;
-	if (!dbp_optionsupdatecallback && control && environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &variable_update) && variable_update)
+	// Always poll variable updates in retro_run: some frontends report callback support
+	// but do not invoke update-display callbacks consistently.
+	if (control && environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &variable_update) && variable_update)
 		check_variables(); // can't do this while DOS has crashed (control is NULL)
 
 	// start input update
