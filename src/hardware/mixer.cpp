@@ -102,6 +102,11 @@ static DBP_MixerChannelVolumeOverride dbp_channel_volumes[] = {
 	{ "SB",     1.0f },
 	{ "FM",     1.0f },
 	{ "TSF",    1.0f },
+	{ "MT32",   1.0f },
+	{ "TANDY",  1.0f },
+	{ "TANDYDAC", 1.0f },
+	{ "CMS",    1.0f },
+	{ "GUS",    1.0f },
 };
 
 static float DBP_MIXER_ClampVolume(float volume)

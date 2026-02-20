@@ -2341,8 +2341,13 @@ static bool check_variables()
 	DBP_MIXER_SetChannelVolume("DISNEY", dbp_mixer_option_to_gain(DBP_Option::mixer_disney));
 	DBP_MIXER_SetChannelVolume("SPKR",   dbp_mixer_option_to_gain(DBP_Option::mixer_spkr));
 	DBP_MIXER_SetChannelVolume("SB",     dbp_mixer_option_to_gain(DBP_Option::mixer_sb));
+	DBP_MIXER_SetChannelVolume("CMS",    dbp_mixer_option_to_gain(DBP_Option::mixer_sb));
 	DBP_MIXER_SetChannelVolume("FM",     dbp_mixer_option_to_gain(DBP_Option::mixer_fm));
-	DBP_MIXER_SetChannelVolume("TSF",    dbp_mixer_option_to_gain(DBP_Option::mixer_tsf));
+	DBP_MIXER_SetChannelVolume("TSF",    dbp_mixer_option_to_gain(DBP_Option::mixer_midi));
+	DBP_MIXER_SetChannelVolume("MT32",   dbp_mixer_option_to_gain(DBP_Option::mixer_midi));
+	DBP_MIXER_SetChannelVolume("TANDY",  dbp_mixer_option_to_gain(DBP_Option::mixer_tandy));
+	DBP_MIXER_SetChannelVolume("TANDYDAC", dbp_mixer_option_to_gain(DBP_Option::mixer_tandy));
+	DBP_MIXER_SetChannelVolume("GUS",    dbp_mixer_option_to_gain(DBP_Option::mixer_gus));
 
 	if (dbp_state == DBPSTATE_BOOT)
 	{

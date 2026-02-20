@@ -129,7 +129,9 @@ namespace DBP_Option
 		mixer_spkr,
 		mixer_sb,
 		mixer_fm,
-		mixer_tsf,
+		mixer_midi,
+		mixer_tandy,
+		mixer_gus,
 		_OPTIONS_NULL_TERMINATOR, _OPTIONS_TOTAL,
 	};
 
@@ -1120,10 +1122,56 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 		{ DBP_MIXER_VOLUME_VALUES },
 		"100"
 	},
+		{
+		"dosbox_pure_mixer_fm",
+		"Adlib Volume", NULL,
+		"Set the volume for the Adlib mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+		{
+		"dosbox_pure_mixer_sb",
+		"Sound Blaster Volume", NULL,
+		"Set the volume for Sound Blaster and Creative Music System mixer channels.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_midi",
+		"MIDI/MT-32 Volume", NULL,
+		"Set the volume for internal General MIDI and Roland MT-32 mixer channels." "\n"
+		"This does not affect Frontend MIDI driver output.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_gus",
+		"Gravis Volume", NULL,
+		"Set the volume for the Gravis Ultrasound mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
+	{
+		"dosbox_pure_mixer_tandy",
+		"Tandy Volume", NULL,
+		"Set the volume for Tandy 1000 mixer channel.",
+		NULL,
+		DBP_OptionCat::Audio,
+		{ DBP_MIXER_VOLUME_VALUES },
+		"100"
+	},
 	{
 		"dosbox_pure_mixer_disney",
 		"Disney Volume", NULL,
-		"Set the volume for the Disney mixer channel.",
+		"Set the volume for the Disney Sound Source mixer channel.",
 		NULL,
 		DBP_OptionCat::Audio,
 		{ DBP_MIXER_VOLUME_VALUES },
@@ -1131,35 +1179,9 @@ static retro_core_option_v2_definition option_defs[DBP_Option::_OPTIONS_TOTAL] =
 	},
 	{
 		"dosbox_pure_mixer_spkr",
-		"Speaker Volume", NULL,
-		"Set the volume for the PC Speaker mixer channel.",
+		"PC-Speaker Volume", NULL,
+		"Set the volume for the PC-Speaker mixer channel.",
 		NULL,
-		DBP_OptionCat::Audio,
-		{ DBP_MIXER_VOLUME_VALUES },
-		"100"
-	},
-	{
-		"dosbox_pure_mixer_sb",
-		"SoundBlaster Volume", NULL,
-		"Set the volume for the SoundBlaster digital mixer channel.",
-		NULL,
-		DBP_OptionCat::Audio,
-		{ DBP_MIXER_VOLUME_VALUES },
-		"100"
-	},
-	{
-		"dosbox_pure_mixer_fm",
-		"FM/OPL Volume", NULL,
-		"Set the volume for the FM/OPL mixer channel.",
-		NULL,
-		DBP_OptionCat::Audio,
-		{ DBP_MIXER_VOLUME_VALUES },
-		"100"
-	},
-	{
-		"dosbox_pure_mixer_tsf",
-		"MIDI Volume", NULL,
-		"Set the volume for the TinySoundFont MIDI mixer channel." "\n\n", NULL, //end of Audio > Advanced section
 		DBP_OptionCat::Audio,
 		{ DBP_MIXER_VOLUME_VALUES },
 		"100"
